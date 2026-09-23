@@ -33,10 +33,11 @@ export const taskService = {
     projectId: string,
     filters?: Record<string, unknown>,
   ): Promise<Task[]> => {
-    const filterParam = JSON.stringify({ projectId, ...filters });
-    const response = await apiClient.get(
-      `/api/tasks?filters=${encodeURIComponent(filterParam)}`,
-    );
+    let url = `/api/tasks?projectId=${encodeURIComponent(projectId)}`;
+    if (filters && Object.keys(filters).length > 0) {
+      url += `&filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    }
+    const response = await apiClient.get(url);
     return response.data.data;
   },
 
