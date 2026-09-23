@@ -156,19 +156,19 @@ export function TaskCard({
             title={
               isPM && nextStatus === TaskStatus.DONE
                 ? "PM cannot mark tasks as DONE (ABAC rule)"
-                : `Advance to ${nextStatus}`
+                : `Pindahkan status ke ${nextStatus}`
             }
             onClick={(e) => {
               e.stopPropagation();
               onQuickStatusChange(task, nextStatus);
             }}
-            className={`flex items-center gap-1 rounded-lg px-2 py-1 font-semibold transition-all ${
+            className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
               isTransitionDisabled
                 ? "opacity-30 cursor-not-allowed bg-zinc-800 text-zinc-500"
                 : "bg-[#50B1D2]/10 border border-[#50B1D2]/30 text-[#50B1D2] hover:bg-[#50B1D2] hover:text-black shadow-[0_0_10px_rgba(80,177,210,0.15)]"
             }`}
           >
-            <span>{nextStatus}</span>
+            <span>{nextStatus === TaskStatus.DONE ? "Selesai" : "Mulai"}</span>
             <ChevronRight className="h-3 w-3" />
           </button>
         )}
