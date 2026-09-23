@@ -79,7 +79,7 @@ export default function StandupPage({
   const handleCopyStandup = () => {
     if (!standup) return;
 
-    let text = `*Daily Standup Summary - ${project?.title || "Project"}*\n`;
+    let text = `*Daily Standup Summary - ${project?.name || project?.title || "Project"}*\n`;
     text += `Generated: ${new Date().toLocaleDateString()}\n\n`;
 
     departments.forEach((d) => {
@@ -136,8 +136,8 @@ export default function StandupPage({
                 </span>
               </div>
               <p className="text-xs text-zinc-400">
-                {project?.title || "Project"} — Automated cross-department
-                progress and blocker aggregation
+                {project?.name || project?.title || "Project"} — Automated
+                cross-department progress and blocker aggregation
               </p>
             </div>
           </div>

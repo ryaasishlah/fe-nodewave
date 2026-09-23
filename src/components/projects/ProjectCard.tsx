@@ -23,11 +23,20 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const { user } = useAuthStore();
   const isClient = user?.role === Role.CLIENT_GUEST;
 
-  const total = project.stats?.totalTasks || 0;
-  const completed = project.stats?.completedTasks || 0;
-  const inProgress = project.stats?.inProgressTasks || 0;
-  const todo = project.stats?.todoTasks || 0;
-  const percentage = project.stats?.progressPercentage || 0;
+  const projectTitle = project.name || project.title || "Project";
+  const total =
+    project.metrics?.totalTasks ??
+    project.stats?.totalTasks ??
+    project._count?.tasks ??
+    0;
+  const completed =
+    project.metrics?.completedTasks ?? project.stats?.completedTasks ?? 0;
+  const inProgress = project.stats?.inProgressTasks ?? 0;
+  const todo = project.stats?.todoTasks ?? 0;
+  const percentage =
+    project.metrics?.progressPercentage ??
+    project.stats?.progressPercentage ??
+    (total > 0 ? Math.round((completed / total) * 100) : 0);
 
   return (
     <div className="group relative flex flex-col justify-between rounded-2xl border border-[#202029] bg-[#111116] p-6 hover:border-[#50B1D2]/40 hover:bg-[#14141c] transition-all shadow-lg">
@@ -36,7 +45,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1">
             <h3 className="text-base font-bold text-white group-hover:text-[#50B1D2] transition-colors">
-              {project.title}
+              {projectTitle}
             </h3>
             <p className="text-xs text-zinc-400 line-clamp-2">
               {project.description || "No project description provided."}

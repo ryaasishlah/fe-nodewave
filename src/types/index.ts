@@ -39,11 +39,22 @@ export interface ProjectMember {
 
 export interface Project {
   id: string;
-  title: string;
-  description: string;
-  status: string;
-  clientVisible: boolean;
+  name?: string;
+  title?: string;
+  description?: string | null;
+  status?: string;
+  clientVisible?: boolean;
+  clientGuestId?: string | null;
   members?: ProjectMember[];
+  _count?: {
+    tasks: number;
+    members: number;
+  };
+  metrics?: {
+    totalTasks: number;
+    completedTasks: number;
+    progressPercentage: number;
+  };
   stats?: {
     totalTasks: number;
     completedTasks: number;

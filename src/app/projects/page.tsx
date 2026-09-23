@@ -41,18 +41,29 @@ export default function ProjectsPage() {
   const isPM = user?.role === Role.PRODUCT_MANAGER;
   const isClient = user?.role === Role.CLIENT_GUEST;
 
-  const filteredProjects = (projects || []).filter(
-    (p) =>
-      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.description?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredProjects = (projects || []).filter((p) => {
+    const title = p.name || p.title || "";
+    return (
+      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   // Compute aggregate stats across projects
   const totalProjects = projects?.length || 0;
   const totalTasks =
-    projects?.reduce((acc, p) => acc + (p.stats?.totalTasks || 0), 0) || 0;
+    projects?.reduce(
+      (acc, p) =>
+        acc +
+        (p.metrics?.totalTasks ?? p.stats?.totalTasks ?? p._count?.tasks ?? 0),
+      0,
+    ) || 0;
   const totalCompleted =
-    projects?.reduce((acc, p) => acc + (p.stats?.completedTasks || 0), 0) || 0;
+    projects?.reduce(
+      (acc, p) =>
+        acc + (p.metrics?.completedTasks ?? p.stats?.completedTasks ?? 0),
+      0,
+    ) || 0;
   const overallProgress =
     totalTasks > 0 ? Math.round((totalCompleted / totalTasks) * 100) : 0;
 

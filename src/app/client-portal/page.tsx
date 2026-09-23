@@ -123,7 +123,7 @@ export default function ClientPortalPage() {
                     : "border border-[#22222f] bg-[#111116] text-zinc-400 hover:text-white"
                 }`}
               >
-                {proj.title}
+                {proj.name || proj.title}
               </button>
             ))}
           </div>
@@ -136,7 +136,7 @@ export default function ClientPortalPage() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="space-y-1">
                   <h2 className="text-lg font-bold text-white">
-                    {activeProject.title}
+                    {activeProject.name || activeProject.title}
                   </h2>
                   <p className="text-xs text-zinc-400">
                     {activeProject.description ||

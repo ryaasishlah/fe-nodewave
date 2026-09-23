@@ -2,8 +2,9 @@ import { apiClient } from "@/lib/axios";
 import type { Project } from "@/types";
 
 export interface CreateProjectPayload {
-  title: string;
-  description: string;
+  name?: string;
+  title?: string;
+  description?: string;
   clientVisible?: boolean;
 }
 
@@ -19,7 +20,10 @@ export const projectService = {
   },
 
   createProject: async (payload: CreateProjectPayload): Promise<Project> => {
-    const response = await apiClient.post("/api/projects", payload);
+    const response = await apiClient.post("/api/projects", {
+      name: payload.name || payload.title,
+      description: payload.description,
+    });
     return response.data.data;
   },
 };

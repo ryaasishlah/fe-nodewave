@@ -175,7 +175,7 @@ export default function KanbanBoardPage({
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold tracking-tight text-white">
-                  {project?.title || "Deliverable Board"}
+                  {project?.name || project?.title || "Deliverable Board"}
                 </h1>
                 <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-mono font-semibold text-emerald-400">
                   {project?.status || "ACTIVE"}
