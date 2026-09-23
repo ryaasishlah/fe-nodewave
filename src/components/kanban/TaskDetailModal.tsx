@@ -106,6 +106,8 @@ export function TaskDetailModal({
       if (status === 409) {
         onClose();
         onConflict(task?.title || "Task");
+      } else if (status === 422) {
+        setErrorMessage(`Dependency Lock (422): ${message}`);
       } else {
         setErrorMessage(message);
       }

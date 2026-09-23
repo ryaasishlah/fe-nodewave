@@ -54,7 +54,7 @@ export const taskService = {
   },
 
   updateTask: async (id: string, payload: UpdateTaskPayload): Promise<Task> => {
-    const response = await apiClient.put(`/api/tasks/${id}`, payload);
+    const response = await apiClient.patch(`/api/tasks/${id}`, payload);
     return response.data.data;
   },
 
