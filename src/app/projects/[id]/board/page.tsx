@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
   ArrowLeft,
-  Calendar,
   CheckCircle2,
   Clock,
   ExternalLink,
@@ -146,10 +145,10 @@ export default function KanbanBoardPage({
       badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/30",
     },
     {
-      status: TaskStatus.IN_REVIEW,
-      label: "In Review",
-      icon: <Calendar className="h-4 w-4 text-purple-400" />,
-      badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/30",
+      status: TaskStatus.BLOCKED,
+      label: "Blocked",
+      icon: <AlertCircle className="h-4 w-4 text-red-400" />,
+      badgeColor: "bg-red-500/10 text-red-400 border-red-500/30",
     },
     {
       status: TaskStatus.DONE,

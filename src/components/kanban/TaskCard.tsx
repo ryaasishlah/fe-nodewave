@@ -45,9 +45,9 @@ export function TaskCard({
     switch (current) {
       case TaskStatus.TODO:
         return TaskStatus.IN_PROGRESS;
+      case TaskStatus.BLOCKED:
+        return TaskStatus.IN_PROGRESS;
       case TaskStatus.IN_PROGRESS:
-        return TaskStatus.IN_REVIEW;
-      case TaskStatus.IN_REVIEW:
         return TaskStatus.DONE;
       case TaskStatus.DONE:
         return null;

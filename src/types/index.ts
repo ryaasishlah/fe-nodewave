@@ -1,5 +1,6 @@
 export enum Role {
   PRODUCT_MANAGER = "PRODUCT_MANAGER",
+  INTERNAL_TEAM = "INTERNAL_TEAM",
   UIUX_ENGINEER = "UIUX_ENGINEER",
   FRONTEND_ENGINEER = "FRONTEND_ENGINEER",
   BACKEND_ENGINEER = "BACKEND_ENGINEER",
@@ -17,7 +18,7 @@ export enum Department {
 export enum TaskStatus {
   TODO = "TODO",
   IN_PROGRESS = "IN_PROGRESS",
-  IN_REVIEW = "IN_REVIEW",
+  BLOCKED = "BLOCKED",
   DONE = "DONE",
 }
 
@@ -69,16 +70,25 @@ export interface Project {
 export interface TaskAttachment {
   id: string;
   taskId: string;
+  fileName?: string;
+  name?: string;
   fileUrl: string;
+  fileSize?: number;
   fileType: string;
-  name: string;
   createdAt: string;
 }
 
 export interface TaskDependency {
   id: string;
   taskId: string;
-  dependsOnTaskId: string;
+  prerequisiteTaskId?: string;
+  dependsOnTaskId?: string;
+  prerequisiteTask?: {
+    id: string;
+    title: string;
+    status: TaskStatus;
+    department: Department;
+  };
   dependsOnTask?: {
     id: string;
     title: string;
@@ -128,24 +138,28 @@ export interface AuditLog {
   timestamp: string;
 }
 
+export interface StandupDepartmentSummary {
+  completedYesterday: Array<{
+    taskId?: string;
+    id?: string;
+    title: string;
+    completedBy: string;
+    timestamp: string;
+  }>;
+  blockedToday: Array<{
+    taskId?: string;
+    id?: string;
+    title: string;
+    assignee: string;
+    waitingOn?: Array<{ title: string; status: TaskStatus }>;
+    blockedBy?: Array<{ id?: string; title: string; status?: TaskStatus }>;
+  }>;
+}
+
 export interface StandupSummary {
   projectId: string;
-  timestamp: string;
-  summaryByDepartment: Record<
-    Department,
-    {
-      completedYesterday: Array<{
-        id: string;
-        title: string;
-        completedBy: string;
-        timestamp: string;
-      }>;
-      blockedToday: Array<{
-        id: string;
-        title: string;
-        assignee: string;
-        blockedBy: Array<{ id: string; title: string; status: TaskStatus }>;
-      }>;
-    }
-  >;
+  generatedAt?: string;
+  timestamp?: string;
+  summary?: Record<string, StandupDepartmentSummary>;
+  summaryByDepartment?: Record<string, StandupDepartmentSummary>;
 }

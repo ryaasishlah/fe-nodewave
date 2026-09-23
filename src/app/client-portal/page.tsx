@@ -61,8 +61,7 @@ export default function ClientPortalPage() {
     (t) => t.status === TaskStatus.DONE,
   ).length;
   const inProgress = clientDeliverables.filter(
-    (t) =>
-      t.status === TaskStatus.IN_PROGRESS || t.status === TaskStatus.IN_REVIEW,
+    (t) => t.status === TaskStatus.IN_PROGRESS,
   ).length;
   const pending = clientDeliverables.filter(
     (t) => t.status === TaskStatus.TODO,
@@ -226,9 +225,7 @@ export default function ClientPortalPage() {
                 <div className="space-y-2.5">
                   {clientDeliverables.map((item) => {
                     const isDone = item.status === TaskStatus.DONE;
-                    const isInProgress =
-                      item.status === TaskStatus.IN_PROGRESS ||
-                      item.status === TaskStatus.IN_REVIEW;
+                    const isInProgress = item.status === TaskStatus.IN_PROGRESS;
 
                     return (
                       <div

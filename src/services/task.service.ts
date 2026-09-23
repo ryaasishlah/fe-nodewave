@@ -23,9 +23,11 @@ export interface UpdateTaskPayload {
 }
 
 export interface AddAttachmentPayload {
-  name: string;
+  name?: string;
+  fileName?: string;
   fileUrl: string;
-  fileType: string;
+  fileSize?: number;
+  fileType?: string;
 }
 
 export const taskService = {
@@ -64,6 +66,12 @@ export const taskService = {
     taskId: string,
     payload: AddAttachmentPayload,
   ): Promise<void> => {
-    await apiClient.post(`/api/tasks/${taskId}/attachments`, payload);
+    const body = {
+      fileName: payload.fileName || payload.name || "Deliverable Artifact",
+      fileUrl: payload.fileUrl,
+      fileSize: payload.fileSize || 1024,
+      fileType: payload.fileType || "LINK",
+    };
+    await apiClient.post(`/api/tasks/${taskId}/attachments`, body);
   },
 };

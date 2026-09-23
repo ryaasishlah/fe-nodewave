@@ -83,10 +83,17 @@ export default function StandupPage({
     text += `Generated: ${new Date().toLocaleDateString()}\n\n`;
 
     departments.forEach((d) => {
-      const summary = standup.summaryByDepartment[d.key];
+      const summary = standup?.summary?.[d.key] ||
+        standup?.summaryByDepartment?.[d.key] || {
+          completedYesterday: [],
+          blockedToday: [],
+        };
       text += `*${d.label}*\n`;
 
-      if (summary?.completedYesterday.length > 0) {
+      if (
+        summary?.completedYesterday &&
+        summary.completedYesterday.length > 0
+      ) {
         text += `  Completed (Last 24h):\n`;
         summary.completedYesterday.forEach((t) => {
           text += `   - ${t.title} (by ${t.completedBy})\n`;
@@ -95,10 +102,14 @@ export default function StandupPage({
         text += `  Completed (Last 24h): None\n`;
       }
 
-      if (summary?.blockedToday.length > 0) {
+      if (summary?.blockedToday && summary.blockedToday.length > 0) {
         text += `  Blocked Today:\n`;
         summary.blockedToday.forEach((t) => {
-          const blockers = t.blockedBy.map((b) => b.title).join(", ");
+          const blockers =
+            ((t.waitingOn || t.blockedBy || []) as Array<{ title?: string }>)
+              .map((b) => b.title)
+              .filter(Boolean)
+              .join(", ") || "Prerequisite Deliverable";
           text += `   - ${t.title} [Assignee: ${t.assignee}] (Blocked by: ${blockers})\n`;
         });
       } else {
@@ -194,7 +205,11 @@ export default function StandupPage({
         ) : standup ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {departments.map((dept) => {
-              const summary = standup.summaryByDepartment[dept.key];
+              const summary = standup?.summary?.[dept.key] ||
+                standup?.summaryByDepartment?.[dept.key] || {
+                  completedYesterday: [],
+                  blockedToday: [],
+                };
               const completedCount = summary?.completedYesterday?.length || 0;
               const blockedCount = summary?.blockedToday?.length || 0;
 
@@ -232,9 +247,9 @@ export default function StandupPage({
 
                     {completedCount > 0 ? (
                       <div className="space-y-1.5">
-                        {summary.completedYesterday.map((task) => (
+                        {summary.completedYesterday.map((task, idx) => (
                           <div
-                            key={task.id}
+                            key={task.taskId || task.id || idx}
                             className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs space-y-1"
                           >
                             <div className="font-semibold text-white">
@@ -243,13 +258,15 @@ export default function StandupPage({
                             <div className="flex items-center justify-between text-[10px] text-zinc-400">
                               <span>Completed by: {task.completedBy}</span>
                               <span className="font-mono text-zinc-500">
-                                {new Date(task.timestamp).toLocaleTimeString(
-                                  [],
-                                  {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  },
-                                )}
+                                {task.timestamp
+                                  ? new Date(task.timestamp).toLocaleTimeString(
+                                      [],
+                                      {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      },
+                                    )
+                                  : ""}
                               </span>
                             </div>
                           </div>
@@ -276,35 +293,49 @@ export default function StandupPage({
 
                     {blockedCount > 0 ? (
                       <div className="space-y-1.5">
-                        {summary.blockedToday.map((task) => (
-                          <div
-                            key={task.id}
-                            className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-xs space-y-1.5"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-semibold text-white">
-                                {task.title}
-                              </span>
-                              <span className="flex items-center gap-1 text-[9px] font-bold text-red-400 uppercase">
-                                <Lock className="h-2.5 w-2.5" /> Blocked
-                              </span>
-                            </div>
+                        {summary.blockedToday.map((task, idx) => {
+                          const blockers =
+                            (
+                              (task.waitingOn ||
+                                task.blockedBy ||
+                                []) as Array<{
+                                title?: string;
+                              }>
+                            )
+                              .map((b) => b.title)
+                              .filter(Boolean)
+                              .join(", ") || "Prerequisite Deliverable";
 
-                            <div className="text-[10px] text-zinc-400">
-                              Assignee:{" "}
-                              <span className="text-zinc-200">
-                                {task.assignee}
-                              </span>
-                            </div>
+                          return (
+                            <div
+                              key={task.taskId || task.id || idx}
+                              className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-xs space-y-1.5"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-semibold text-white">
+                                  {task.title}
+                                </span>
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-red-400 uppercase">
+                                  <Lock className="h-2.5 w-2.5" /> Blocked
+                                </span>
+                              </div>
 
-                            <div className="text-[10px] text-red-300/90 rounded bg-red-950/20 p-1.5 border border-red-900/30">
-                              Waiting on prerequisite:{" "}
-                              <span className="font-semibold text-white">
-                                {task.blockedBy.map((b) => b.title).join(", ")}
-                              </span>
+                              <div className="text-[10px] text-zinc-400">
+                                Assignee:{" "}
+                                <span className="text-zinc-200">
+                                  {task.assignee}
+                                </span>
+                              </div>
+
+                              <div className="text-[10px] text-red-300/90 rounded bg-red-950/20 p-1.5 border border-red-900/30">
+                                Waiting on prerequisite:{" "}
+                                <span className="font-semibold text-white">
+                                  {blockers}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="rounded-xl border border-[#1a1a24] bg-[#0c0c11] p-3 text-center text-xs text-zinc-500">

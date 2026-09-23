@@ -15,7 +15,7 @@ import {
   Shield,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auditService } from "@/services/audit.service";
 import {
   type AddAttachmentPayload,
@@ -66,7 +66,7 @@ export function TaskDetailModal({
   const [attType, setAttType] = useState("FIGMA");
 
   // Keep state synced when task changes
-  useState(() => {
+  useEffect(() => {
     if (task) {
       setTitle(task.title);
       setDescription(task.description);
@@ -74,7 +74,7 @@ export function TaskDetailModal({
       setDepartment(task.department);
       setIsClientVisible(task.isClientVisible);
     }
-  });
+  }, [task]);
 
   const isPM = user?.role === Role.PRODUCT_MANAGER;
   const isClient = user?.role === Role.CLIENT_GUEST;
@@ -306,7 +306,7 @@ export function TaskDetailModal({
                   >
                     <option value={TaskStatus.TODO}>TODO</option>
                     <option value={TaskStatus.IN_PROGRESS}>IN_PROGRESS</option>
-                    <option value={TaskStatus.IN_REVIEW}>IN_REVIEW</option>
+                    <option value={TaskStatus.BLOCKED}>BLOCKED</option>
                     <option
                       value={TaskStatus.DONE}
                       disabled={isPM} // ABAC: PM cannot complete to DONE
